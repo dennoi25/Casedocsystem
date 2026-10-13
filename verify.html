@@ -91,7 +91,11 @@ function api(params) {
 }
 function fail(box, e, code) {
   box.innerHTML = '<div class="card bad"><b class="h">' + esc(e.message) + '</b>' +
-    '<p style="margin:6px 0 0"><a href="' + esc(EXEC + '?page=verify' + (code ? '&c=' + encodeURIComponent(code) : '')) + '">เปิดหน้าตรวจสอบในระบบของศาล</a></p></div>';
+    '<p style="margin:6px 0 0"><a href="' + esc(EXEC + '?page=verify' + (code ? '&c=' + encodeURIComponent(code) : '')) + '">เปิดหน้าตรวจสอบในระบบของศาล</a></p>' +
+    '<details style="margin-top:8px;font-size:.88rem"><summary>สำหรับเจ้าหน้าที่</summary>' +
+    '<p style="margin:6px 0 0">หน้านี้เรียก <a class="mono" target="_blank" rel="noopener" href="' + esc(EXEC + '?api=verify&c=' + encodeURIComponent(code || 'SG2569-TEST0000')) + '">' + esc(EXEC) + '?api=verify…</a> — เปิดลิงก์นี้แล้วต้องเห็นข้อความ {"ok":true,…}</p>' +
+    '<ul><li>เห็นหน้า Google "ไม่สามารถเปิดไฟล์ได้" → URL ใน EXEC ไม่ตรงกับ Deploy → Manage deployments หรือสิทธิ์ไม่ใช่ Anyone</li>' +
+    '<li>เห็นหน้าแรกของระบบ → ยังไม่ได้ Deploy Code.gs ชุดใหม่เป็น New version</li></ul></details></div>';
 }
 
 /* ---------- ตรวจด้วยรหัส ---------- */
