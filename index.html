@@ -9,7 +9,10 @@
     // ส่งต่อไปยังเว็บแอป Apps Script พร้อมพารามิเตอร์เดิมทั้งหมด (?page=verify&c=SG... จาก QR บนเอกสาร)
     // ถ้า Deploy ใหม่จนได้ URL /exec ใหม่ ให้แก้บรรทัดนี้บรรทัดเดียว
     var EXEC = 'https://script.google.com/macros/s/AKfycbzaxS89Rew8mwlJV_m-JrBqBhyq1RsZ-hCe_9ZVgUDyNDF69dLi76gPYF-GKbGoqOX5/exec';
-    location.replace(EXEC + location.search + location.hash);
+    // QR บนเอกสารลงนาม (?page=verify&c=...) → หน้าตรวจสอบบน GitHub (ไม่ติดปัญหาล็อกอิน Google หลายบัญชี)
+    var P = new URLSearchParams(location.search);
+    if (P.get('page') === 'verify') location.replace('verify.html' + (P.get('c') ? '?c=' + encodeURIComponent(P.get('c')) : ''));
+    else location.replace(EXEC + location.search + location.hash);
   </script>
   <style>
     body { margin: 0; font-family: Sarabun, Tahoma, sans-serif; background: #F6F6F2; color: #1E2330;
