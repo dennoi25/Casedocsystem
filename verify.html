@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>ตรวจสอบเอกสาร — ศาลแรงงานภาค 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1C2B4A;--ink-2:#34497A;--paper:#F6F6F2;--card:#fff;--line:#D9DAD3;--line-2:#C5C7BE;--text:#1E2330;--muted:#5B6274;
+  --seal:#A3262A;--seal-tint:#FBEDEC;--ok:#2D6A3E;--ok-tint:#E9F3EC;--warn:#8A5A06;--warn-tint:#FBF3E2;--r:6px}
+*{box-sizing:border-box}
+body{margin:0;font-family:Sarabun,Tahoma,'Leelawadee UI',sans-serif;background:var(--paper);color:var(--text);line-height:1.65}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+header{background:var(--ink);color:#fff;border-bottom:4px solid var(--seal)}
+header .wrap{padding:20px 16px 16px}
+header .org{font-size:.95rem;opacity:.8}
+header h1{margin:0;font-size:1.6rem;font-weight:600}
+main{padding:24px 0 48px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+.lead{color:var(--muted);margin:0 0 18px}
+.drop{border:2px dashed var(--line-2);border-radius:var(--r);padding:28px 16px;text-align:center;cursor:pointer;background:#FBFBF9}
+.drop:hover,.drop.over{border-color:var(--ink-2);background:#EEF1F7}
+.drop small{display:block;color:var(--muted);margin-top:4px}
+.row{display:flex;gap:8px;margin-top:18px}
+.row input{flex:1;min-width:0;font:inherit;font-size:1.05rem;padding:10px 12px;border:1px solid var(--line-2);border-radius:var(--r);font-family:Consolas,monospace;text-transform:uppercase}
+.btn{font:inherit;font-weight:600;padding:10px 18px;border-radius:var(--r);border:1px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;white-space:nowrap}
+.btn:disabled{opacity:.6;cursor:wait}
+.card{margin-top:16px;padding:14px 16px;border-radius:var(--r);border-left:4px solid var(--ok);background:var(--ok-tint)}
+.card.bad{border-left-color:var(--seal);background:var(--seal-tint)}
+.card.warn{border-left-color:var(--warn);background:var(--warn-tint)}
+.card b.h{display:block;font-size:1.05rem}
+dl{display:grid;grid-template-columns:150px 1fr;gap:4px 12px;margin:10px 0 0}
+dt{color:var(--muted)} dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+ul{margin:4px 0 0;padding-left:20px}
+.mono{font-family:Consolas,monospace;font-size:.8rem;color:var(--muted);overflow-wrap:anywhere}
+.muted{color:var(--muted)}
+.note{font-size:.88rem;color:var(--muted);margin:16px 0 0}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:.93rem}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.tblw{overflow-x:auto}
+footer{color:var(--muted);font-size:.9rem;text-align:center;padding:0 16px 32px}
+footer a{color:var(--ink-2)}
+@media (max-width:560px){dl{grid-template-columns:1fr} dt{margin-top:6px} .row{flex-direction:column}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="org">ศาลแรงงานภาค 5 — ระบบส่งเอกสารคดีออนไลน์</div><h1>ตรวจสอบเอกสาร</h1></div></header>
+<main><div class="wrap"><div class="panel">
+  <p class="lead">ตรวจว่าเอกสารที่ท่านมีเป็นฉบับเดียวกับที่บันทึกไว้ในระบบของศาลหรือไม่ — ไฟล์ไม่ถูกส่งขึ้นเซิร์ฟเวอร์
+    ระบบคำนวณรหัส SHA-256 ในเครื่องของท่านแล้วนำรหัสไปเทียบเท่านั้น</p>
+  <form class="row" id="codeForm" novalidate style="margin-top:0">
+    <input id="code" maxlength="40" placeholder="รหัส SG2569-… / เลขที่ส่ง SV2569-… / เลขที่ส่งกลับ RT2569-…" aria-label="รหัสอ้างอิง" autocomplete="off">
+    <button class="btn" id="codeBtn" type="submit">ตรวจสอบรหัส</button>
+  </form>
+  <div id="codeRes"></div>
+  <div id="drop" class="drop" tabindex="0" role="button" style="margin-top:18px" aria-label="เลือกไฟล์ที่ต้องการตรวจสอบ">
+    <strong>เลือกไฟล์</strong> หรือลากไฟล์มาวางที่นี่ เพื่อเทียบกับต้นฉบับในระบบ<small>PDF, JPG, PNG, DOC, DOCX</small>
+  </div>
+  <input type="file" id="file" hidden>
+  <div id="fileRes"></div>
+  <p class="note">รหัสอ้างอิงการลงนาม (SG) พิมพ์อยู่ใต้ QR บนเอกสารฉบับลงนาม · เลขที่ส่ง (SV) อยู่ในอีเมลที่ศาลส่งถึงท่าน ·
+    เลขที่ส่งกลับ (RT) อยู่ในอีเมลใบรับ · ไฟล์ที่ถูกเปิดแล้ว "บันทึกเป็น" หรือพิมพ์เป็น PDF ใหม่ จะไม่ตรงกับต้นฉบับ ให้ใช้ไฟล์ที่ดาวน์โหลดจากระบบโดยตรง</p>
+</div></div></main>
+<footer>ศาลแรงงานภาค 5 · <a id="sysLink" href="#">เปิดระบบส่งเอกสารคดีออนไลน์</a></footer>
+
+<script>
+// URL เว็บแอป (/exec) — ต้องตรงกับ Deploy → Manage deployments และตรงกับ index.html
+var EXEC = 'https://script.google.com/macros/s/AKfycbzaxS89Rew8mwlJV_m-JrBqBhyq1RsZ-hCe_9ZVgUDyNDF69dLi76gPYF-GKbGoqOX5/exec';
+
+var $ = function (s) { return document.querySelector(s); };
+var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+var kv = function (rows) { return '<dl>' + rows.filter(function (r) { return r[1] !== '' && r[1] != null; }).map(function (r) { return '<dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd>'; }).join('') + '</dl>'; };
+var INFO = null;   // ผลตรวจรหัสล่าสุด ใช้เทียบไฟล์
+$('#sysLink').href = EXEC;
+
+function api(params) {
+  var q = Object.keys(params).map(function (k) { return k + '=' + encodeURIComponent(params[k]); }).join('&');
+  // credentials: 'omit' — ไม่ใช้บัญชี Google ในเบราว์เซอร์ จึงไม่ติดปัญหาล็อกอินหลายบัญชี
+  return fetch(EXEC + '?api=verify&' + q, { credentials: 'omit', cache: 'no-store' }).then(function (r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }).catch(function (e) {
+    throw new Error('เชื่อมต่อระบบของศาลไม่ได้ (' + e.message + ') — ตรวจอินเทอร์เน็ต หรือเปิดหน้าตรวจสอบในระบบโดยตรง');
+  }).then(function (j) {
+    if (!j.ok) throw new Error(j.error || 'ตรวจสอบไม่สำเร็จ');
+    return j.result;
+  });
+}
+function fail(box, e, code) {
+  box.innerHTML = '<div class="card bad"><b class="h">' + esc(e.message) + '</b>' +
+    '<p style="margin:6px 0 0"><a href="' + esc(EXEC + '?page=verify' + (code ? '&c=' + encodeURIComponent(code) : '')) + '">เปิดหน้าตรวจสอบในระบบของศาล</a></p></div>';
+}
+
+/* ---------- ตรวจด้วยรหัส ---------- */
+function verifyCode(code) {
+  var box = $('#codeRes'), btn = $('#codeBtn');
+  box.innerHTML = '<p class="muted" style="margin:12px 0 0">กำลังตรวจสอบ…</p>'; btn.disabled = true;
+  api({ c: code }).then(function (r) {
+    INFO = r.found ? r : null;
+    if (r.kind === 'svc') {
+      box.innerHTML = r.found ? '<div class="card"><b class="h">✓ พบ' + (r.batch ? 'เลขที่ส่งกลับ ' + esc(r.batch) : 'เลขที่ส่งเอกสาร ' + esc(r.code)) + ' ในระบบของศาล</b>' +
+        kv([['เลขที่ส่ง', r.code === r.batch ? '' : r.code], ['คดีหมายเลขดำที่', r.caseNo], ['เรื่อง', r.title], ['ศาลส่งเมื่อ', r.sentAt],
+          ['ผู้รับ', r.recipients + ' ราย · ยืนยันรับแล้ว ' + r.acked + ' ราย' + (r.needSign ? ' · ลงนามแล้ว ' + r.signed + ' ฉบับ' : '')]]) +
+        '<p style="margin:10px 0 0">ไฟล์ที่ศาลส่ง:</p><ul>' + r.files.map(function (x) { return '<li>' + esc(x.name) + ' <span class="mono">' + esc(x.sha256.slice(0, 16)) + '…</span></li>'; }).join('') +
+        r.signedFiles.map(function (x) { return '<li>' + esc(x.name) + ' — ฉบับลงนาม ' + esc(x.code) + '</li>'; }).join('') + '</ul>' +
+        '<p style="margin:10px 0 0">เอกสารที่คู่ความส่งกลับถึงศาล:</p>' + ((r.returns || []).length ? '<ul>' + r.returns.map(function (x) {
+          return '<li>' + esc(x.name) + ' <span class="muted" style="font-size:.85rem">' + esc(x.batch) + ' · ' + esc(x.at) + '</span></li>'; }).join('') + '</ul>'
+          : '<p class="muted" style="margin:0">ยังไม่มีการส่งเอกสารกลับ</p>') +
+        '<p style="margin:10px 0 0">เลือกไฟล์ที่ท่านมีด้านล่าง เพื่อตรวจว่าเป็นไฟล์เดียวกันทุกไบต์</p></div>'
+        : '<div class="card bad"><b class="h">✗ ไม่พบ ' + esc(r.code) + '</b>ตรวจเลขอีกครั้ง หรือเอกสารที่อ้างเลขนี้ไม่ได้มาจากระบบของศาล</div>';
+    } else if (r.found && r.voided) {
+      box.innerHTML = '<div class="card bad"><b class="h">⚠ การลงนามรหัส ' + esc(r.code) + ' ถูกศาลยกเลิกแล้ว เมื่อ ' + esc(r.voidedAt) + '</b>' +
+        'เอกสารฉบับนี้ไม่ใช่ฉบับที่มีผล กรุณาติดต่อศาลหรือใช้เอกสารฉบับลงนามล่าสุด' +
+        kv([['เลขที่ส่ง', r.serviceNo], ['คดีหมายเลขดำที่', r.caseNo], ['ผู้ลงนาม', r.signer + ' (' + r.role + ')'], ['ลงนามเมื่อ', r.signedAt]]) + '</div>';
+    } else if (r.found) {
+      box.innerHTML = '<div class="card"><b class="h">✓ พบการลงนามรหัส ' + esc(r.code) + ' ในระบบของศาล</b>' +
+        kv([['เลขที่ส่ง', r.serviceNo], ['คดีหมายเลขดำที่', r.caseNo], ['เรื่อง', r.title], ['ผู้ลงนาม', r.signer + ' (' + r.role + ')'],
+          ['ลงนามเมื่อ', r.signedAt], ['ไฟล์ฉบับลงนาม', r.ready ? r.pages + ' หน้า' : r.status]]) +
+        (r.ready ? '<p class="mono" style="margin:8px 0 0">SHA-256 ' + esc(r.sha256) + '</p><p style="margin:8px 0 0">เลือกไฟล์ PDF ที่ท่านได้รับด้านล่าง เพื่อตรวจว่าเป็นไฟล์เดียวกันทุกไบต์</p>' : '') +
+        '<p class="muted" style="font-size:.88rem;margin:8px 0 0">เอกสารต้นฉบับที่ลงนาม: ' + r.docs.map(function (d) { return esc(d.name); }).join(', ') + '</p></div>';
+    } else {
+      box.innerHTML = '<div class="card bad"><b class="h">✗ ไม่พบรหัสอ้างอิง ' + esc(r.code) + '</b>เอกสารที่อ้างรหัสนี้ไม่ได้มาจากระบบของศาล</div>';
+    }
+  }).catch(function (e) { fail(box, e, code); }).then(function () { btn.disabled = false; });
+}
+$('#codeForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var c = $('#code').value.replace(/\s+/g, '').toUpperCase();
+  if (c) { history.replaceState(null, '', '?c=' + encodeURIComponent(c)); verifyCode(c); }
+});
+
+/* ---------- ตรวจด้วยไฟล์ ---------- */
+function sha256Js(m) {
+  var K = [0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
+    0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+    0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13,
+    0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+    0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
+    0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
+  var H = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+  var len = m.length, nb = ((len + 9 + 63) >> 6) << 6, p = new Uint8Array(nb);
+  p.set(m); p[len] = 0x80;
+  var bits = len * 8, dv = new DataView(p.buffer);
+  dv.setUint32(nb - 8, Math.floor(bits / 4294967296)); dv.setUint32(nb - 4, bits >>> 0);
+  var w = new Uint32Array(64), r = function (x, n) { return (x >>> n) | (x << (32 - n)); };
+  for (var o = 0; o < nb; o += 64) {
+    for (var i = 0; i < 16; i++) w[i] = dv.getUint32(o + i * 4);
+    for (i = 16; i < 64; i++) {
+      var s0 = r(w[i - 15], 7) ^ r(w[i - 15], 18) ^ (w[i - 15] >>> 3), s1 = r(w[i - 2], 17) ^ r(w[i - 2], 19) ^ (w[i - 2] >>> 10);
+      w[i] = (w[i - 16] + s0 + w[i - 7] + s1) >>> 0;
+    }
+    var a = H[0], b = H[1], c = H[2], d = H[3], e = H[4], f = H[5], g = H[6], h = H[7];
+    for (i = 0; i < 64; i++) {
+      var t1 = (h + (r(e, 6) ^ r(e, 11) ^ r(e, 25)) + ((e & f) ^ (~e & g)) + K[i] + w[i]) >>> 0;
+      var t2 = ((r(a, 2) ^ r(a, 13) ^ r(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) >>> 0;
+      h = g; g = f; f = e; e = (d + t1) >>> 0; d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+    }
+    H[0] = (H[0] + a) >>> 0; H[1] = (H[1] + b) >>> 0; H[2] = (H[2] + c) >>> 0; H[3] = (H[3] + d) >>> 0;
+    H[4] = (H[4] + e) >>> 0; H[5] = (H[5] + f) >>> 0; H[6] = (H[6] + g) >>> 0; H[7] = (H[7] + h) >>> 0;
+  }
+  var out = new Uint8Array(32), ov = new DataView(out.buffer);
+  H.forEach(function (x, k) { ov.setUint32(k * 4, x); });
+  return out;
+}
+function sha256Hex(file) {
+  return file.arrayBuffer().then(function (buf) {
+    var data = new Uint8Array(buf);
+    var p = (window.crypto && crypto.subtle) ? crypto.subtle.digest('SHA-256', data).then(function (d) { return new Uint8Array(d); }, function () { return sha256Js(data); })
+      : Promise.resolve(sha256Js(data));
+    return p.then(function (h) { return Array.prototype.map.call(h, function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); });
+  });
+}
+function verifyFile(f) {
+  if (!f) return;
+  var box = $('#fileRes');
+  box.innerHTML = '<p class="muted" style="margin:12px 0 0">กำลังคำนวณรหัสของไฟล์…</p>';
+  var hash;
+  sha256Hex(f).then(function (h) { hash = h; return api({ h: h }); }).then(function (r) {
+    var html = '';
+    if (INFO && INFO.kind === 'svc') {
+      var hit = INFO.files.concat(INFO.signedFiles, INFO.returns || []).filter(function (x) { return x.sha256 === hash; })[0];
+      html += hit ? '<div class="card"><b class="h">✓ ตรงกับไฟล์ “' + esc(hit.name) + '” ใน ' + esc(INFO.code) + ' ทุกไบต์</b></div>'
+        : '<div class="card bad"><b class="h">✗ ไม่ตรงกับไฟล์ใดใน ' + esc(INFO.code) + '</b>ไฟล์นี้ถูกแก้ไข แปลงรูปแบบ หรือเป็นเอกสารคนละฉบับ</div>';
+    } else if (INFO && INFO.ready && !INFO.voided) {
+      html += hash === INFO.sha256 ? '<div class="card"><b class="h">✓ ตรงกับเอกสารฉบับลงนาม ' + esc(INFO.code) + ' ทุกไบต์</b></div>'
+        : '<div class="card bad"><b class="h">✗ ไม่ตรงกับเอกสารฉบับลงนาม ' + esc(INFO.code) + '</b>ไฟล์นี้ไม่ใช่ไฟล์ที่ระบบสร้าง หรือถูกแก้ไขภายหลัง</div>';
+    }
+    var voided = r.found && r.items.every(function (i) { return i.void; });
+    html += voided ? '<div class="card bad"><b class="h">⚠ ไฟล์นี้ตรงกับเอกสารฉบับลงนามที่ถูกยกเลิกแล้ว</b>ไฟล์ “' + esc(f.name) + '” ไม่ใช่ฉบับที่มีผล กรุณาติดต่อศาล</div>'
+      : r.found ? '<div class="card"><b class="h">✓ เป็นเอกสารฉบับจริง ไม่มีการแก้ไข</b>ไฟล์ “' + esc(f.name) + '” ตรงกับเอกสารที่บันทึกไว้ในระบบของศาล' +
+          '<div class="tblw"><table><thead><tr><th>ประเภท</th><th>เลขที่</th><th>คดีหมายเลขดำ</th><th>ชื่อไฟล์ในระบบ</th><th>บันทึกเมื่อ</th></tr></thead><tbody>' +
+          r.items.map(function (i) { return '<tr><td>' + esc(i.kind) + (i.state ? '<br><span class="muted">' + esc(i.state) + '</span>' : '') + '</td><td>' + esc(i.no) +
+            '</td><td>' + esc(i.caseNo) + '</td><td>' + esc(i.name) + '</td><td class="muted">' + esc(i.at) + '</td></tr>'; }).join('') + '</tbody></table></div></div>'
+      : '<div class="card bad"><b class="h">✗ ไม่พบเอกสารนี้ในระบบ</b>ไฟล์ “' + esc(f.name) + '” ไม่ตรงกับเอกสารใดที่ศาลบันทึกไว้ อาจเป็นไฟล์ที่ถูกแก้ไข แปลงรูปแบบ หรือไม่ได้มาจากระบบนี้</div>';
+    box.innerHTML = html + '<p class="mono" style="margin:10px 0 0">SHA-256 ' + esc(hash) + '</p>';
+  }).catch(function (e) { fail(box, e, INFO && INFO.code); });
+}
+var dz = $('#drop'), inp = $('#file');
+dz.addEventListener('click', function () { inp.click(); });
+dz.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inp.click(); } });
+dz.addEventListener('dragover', function (e) { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', function () { dz.classList.remove('over'); });
+dz.addEventListener('drop', function (e) { e.preventDefault(); dz.classList.remove('over'); verifyFile(e.dataTransfer.files[0]); });
+inp.addEventListener('change', function () { verifyFile(inp.files[0]); inp.value = ''; });
+
+/* ---------- รหัสจาก QR: verify.html?c=SG2569-XXXXXXXX ---------- */
+var c0 = (new URLSearchParams(location.search).get('c') || '').replace(/\s+/g, '').toUpperCase();
+if (c0) { $('#code').value = c0; verifyCode(c0); }
+</script>
+</body>
+</html>
