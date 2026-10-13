@@ -8,7 +8,7 @@
   <script>
     // ส่งต่อไปยังเว็บแอป Apps Script พร้อมพารามิเตอร์เดิมทั้งหมด (?page=verify&c=SG... จาก QR บนเอกสาร)
     // ถ้า Deploy ใหม่จนได้ URL /exec ใหม่ ให้แก้บรรทัดนี้บรรทัดเดียว
-    var EXEC = 'https://script.google.com/macros/s/AKfycbzaxS89Rew8mwlJV_m-JrBqBhyq1RsZ-hCe_9ZVgUDyNDF69dLi76gPYF-GKbGoqOX5/exec';
+    var EXEC = 'https://script.google.com/macros/s/AKfycbzb_6COnlzK-ZDyVv1qgOkLAVDcULFGSDHxSYTeIg-WHZXwKKI2BL9P1Y4OdgtHXEFh/exec';
     // QR บนเอกสารลงนาม (?page=verify&c=...) → หน้าตรวจสอบบน GitHub (ไม่ติดปัญหาล็อกอิน Google หลายบัญชี)
     var P = new URLSearchParams(location.search);
     if (P.get('page') === 'verify') location.replace('verify.html' + (P.get('c') ? '?c=' + encodeURIComponent(P.get('c')) : ''));
@@ -22,7 +22,7 @@
 </head>
 <body>
   <p>กำลังเปิดระบบส่งเอกสารคดีออนไลน์…<br>
-    หากหน้าไม่เปลี่ยนเอง <a id="go" href="https://script.google.com/macros/s/AKfycbzaxS89Rew8mwlJV_m-JrBqBhyq1RsZ-hCe_9ZVgUDyNDF69dLi76gPYF-GKbGoqOX5/exec">กดที่นี่</a></p>
+    หากหน้าไม่เปลี่ยนเอง <a id="go"https://script.google.com/macros/s/AKfycbzb_6COnlzK-ZDyVv1qgOkLAVDcULFGSDHxSYTeIg-WHZXwKKI2BL9P1Y4OdgtHXEFh/exec">กดที่นี่</a></p>
   <script>document.getElementById('go').href = EXEC + location.search + location.hash;</script>
 </body>
 </html>
